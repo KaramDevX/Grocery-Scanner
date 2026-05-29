@@ -38,7 +38,7 @@ export default function DashboardPage() {
     
       const { data: receipts, error: receiptsError } = await supabase
         .from('receipts')
-        .select('id, store_id, total_amount, purchased_at, status, stores(name)')
+        .select('id, store_id, total_amount, purchased_at, status, currency, stores(name)')
         .eq('household_id', householdId)
         .eq('status', 'confirmed')
         .order('purchased_at', { ascending: false })
@@ -63,10 +63,10 @@ export default function DashboardPage() {
     fetchStats()
   }, [])
 
-  const formatCurrency = (amount) => {
+  const formatCurrency = (amount, currency = 'EUR') => {
     return new Intl.NumberFormat('en-IE', {
       style: 'currency',
-      currency: 'EUR',
+      currency: currency,
     }).format(amount)
   }
 
@@ -172,7 +172,7 @@ export default function DashboardPage() {
                     </div>
                   </div>
                   <p className="font-semibold text-lg">
-                    {formatCurrency(receipt.total_amount)}
+                    {formatCurrency(receipt.total_amount, receipt.currency || 'EUR')}
                   </p>
                 </CardContent>
               </Card>
